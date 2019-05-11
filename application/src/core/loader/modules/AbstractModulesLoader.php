@@ -16,18 +16,14 @@ abstract class AbstractModulesLoader implements ModulesLoader
 
     protected function loadModule($moduleName)
     {
-        $className = $this->getClassFromFile(realpath($this->modulesPath . '/' . $moduleName . '/' . $this->eventsPath));
+        $className = $this->getClassNameFromFile($this->getPathToFileFromModuleName($moduleName));
 
-        if ($className) {
-            $event = new $className();
-
-            if ($event && $event instanceof EventListener) {
-                $event->bindListeners();
-            }
+        if ($className && ($eventListener = new $className()) && $eventListener instanceof EventListener) {
+            $eventListener->bindListeners();
         }
     }
 
-    protected function getClassFromFile($path_to_file)
+    protected function getClassNameFromFile($path_to_file)
     {
         $contents = file_get_contents($path_to_file);
         $namespace = $class = "";
@@ -59,5 +55,10 @@ abstract class AbstractModulesLoader implements ModulesLoader
         }
 
         return $namespace ? $namespace . '\\' . $class : $class;
+    }
+
+    protected function getPathToFileFromModuleName($moduleName)
+    {
+        return realpath($this->modulesPath . '/' . $moduleName . '/' . $this->eventsPath);
     }
 }

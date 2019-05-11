@@ -1,5 +1,8 @@
 {
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+      "ext-http": "*",
+      "ext-dom": "*",
+      "ext-gd": "*"
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
-namespace Application\Src\Core\Application;
+namespace Application\Src\Core\Application\ParseSite;
 
+use Application\Src\Core\Application\Application;
 use Application\Src\Core\Event\Event;
 
 class ParseSiteApplication extends Application
 {
+    /** @var \ArrayObject */
     protected $params;
 
     /**
@@ -14,16 +16,11 @@ class ParseSiteApplication extends Application
     public function run()
     {
         parent::run();
-
-        if (!$this->params) {
-            throw new \Exception('Empty parameters');
-        }
-
         Event::trigger('parse.site', $this->params);
     }
 
-    public function setParams($params)
+    public function setParams(array $params)
     {
-        $this->params = $params;
+        $this->params = new ScriptParams($params);
     }
 }

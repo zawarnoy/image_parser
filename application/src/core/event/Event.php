@@ -2,38 +2,38 @@
 
 namespace Application\Src\Core\Event;
 
-use ArrayObject;
-
 class Event
 {
     protected static $events = [];
 
     /**
      * @param string $eventName
-     * @param callable $callback
-     *
+     * @param EventData $eventData
      */
-    public static function attach(string $eventName, Callable $callback)
+    public static function attach(string $eventName, EventData $eventData)
     {
         if (!isset(self::$events[$eventName])) {
             self::$events[$eventName] = [];
         }
 
-        self::$events[$eventName][] = $callback;
+        self::$events[$eventName][] = $eventData;
     }
 
     /**
      * @param string $eventName
-     * @param ArrayObject $params
+     * @param $params
      */
-    public static function trigger(string $eventName, ArrayObject $params)
+    public static function trigger(string $eventName, ...$params)
     {
         if (empty(self::$events[$eventName])) {
             return;
         }
 
-        foreach (self::$events[$eventName] as $callback) {
-            $callback($params);
+        /** @var EventData $eventData */
+        foreach (self::$events[$eventName] as $eventData) {
+            if (is_callable($callback = $eventData->getMethodInstance())) {
+                call_user_func_array($callback, $params);
+            }
         }
     }
 }
